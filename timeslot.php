@@ -72,7 +72,14 @@ switch ($action) {
         if ( ! $result ) {  echo "error|error #203: " . mysqli_error($conn) . '|0000'; exit; }
         if ( mysqli_num_rows($result) >= 3 ) { echo 'alert|У Вас занадто багато записів на цей день!|0000'; exit; }
 
-        // TODO: с одного IP не более 3 запросов в час
+        
+        // с одного IP не более 3 запросов в час
+        $q="select * from booking where status >= 50 and timestamp > '" . date('Y/m/d H:i:s', date('U') - 3600) . "' and ip='" . ip() . "'";
+
+// DEBUG: file_put_contents('/tmp/query.log', $q  . "\r\n", FILE_APPEND);
+        $result = mysqli_query($conn, $q);
+        if ( mysqli_num_rows($result) >= 3 ) { echo 'alert|Ви створюєте занадто багато запитів!|0000'; exit; }
+
 
         // TODO: check abuser (frequently asked for OTP where sms was delivered)
 
