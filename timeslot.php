@@ -72,7 +72,16 @@ switch ($action) {
         if ( ! $result ) {  echo "error|error #203: " . mysqli_error($conn) . '|0000'; exit; }
         if ( mysqli_num_rows($result) >= 3 ) { echo 'alert|У Вас занадто багато записів на цей день!|0000'; exit; }
 
-        
+
+        // TODO: проверять, оставлял ли он уже wish на этот день (
+        // TODO: т.е. есть status=50(wish) и 60 (sent) и 70 (delivered), но нет status=80 (ввел OTP)
+        // TODO: если есть status 60, но нет 70 - как-то сообщить ему
+
+        // TODO: если есть status 50 (wish), но нет 60 (sent), значит есть какая-то ошибка в SMS сервисе. отправить админу сообщение
+        //
+        // TODO: check когда много status 60, но кол-во сильно не совпадает с status 70. типа не доставляются
+
+
         // с одного IP не более 3 запросов в час
         $q="select * from booking where status >= 50 and timestamp > '" . date('Y/m/d H:i:s', date('U') - 3600) . "' and ip='" . ip() . "'";
 
@@ -81,7 +90,7 @@ switch ($action) {
         if ( mysqli_num_rows($result) >= 3 ) { echo 'alert|Ви створюєте занадто багато запитів!|0000'; exit; }
 
 
-        // TODO: check abuser (frequently asked for OTP where sms was delivered)
+        // TODO: check abuser (frequently asked for OTP while sms was already delivered but not entered)
 
 
         // insert "wish" into DB

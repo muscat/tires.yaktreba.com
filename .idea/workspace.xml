@@ -4,7 +4,7 @@
     <option name="SCOPE_TYPE" value="3" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="69949439-00a9-445f-ac97-33b15e6f3fbd" name="Default" comment="">
+    <list default="true" id="69949439-00a9-445f-ac97-33b15e6f3fbd" name="Default" comment="не более 3 запросов с одного IP в течении часа">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/timeslot.php" beforeDir="false" afterPath="$PROJECT_DIR$/timeslot.php" afterDir="false" />
     </list>
@@ -38,8 +38,8 @@
       <file leaf-file-name="timeslot.php" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/timeslot.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="749">
-              <caret line="85" lean-forward="true" selection-start-line="85" selection-end-line="85" />
+            <state relative-caret-position="530">
+              <caret line="76" column="100" selection-start-line="76" selection-start-column="100" selection-end-line="76" selection-end-column="100" />
             </state>
           </provider>
         </entry>
@@ -177,18 +177,27 @@
       <workItem from="1633182373928" duration="419000" />
       <workItem from="1633183131046" duration="986000" />
       <workItem from="1634048913658" duration="2378000" />
-      <workItem from="1634644705585" duration="5241000" />
+      <workItem from="1634644705585" duration="6008000" />
     </task>
+    <task id="LOCAL-00001" summary="не более 3 запросов с одного IP в течении часа">
+      <created>1634655066550</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1634655066550</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="109732000" />
+    <option name="totallyTimeSpent" value="110499000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-4" y="0" width="1928" height="1173" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="Messages" weight="0.32957748" />
       <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" weight="0.32957748" />
       <window_info anchor="bottom" id="Database Changes" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="7" />
@@ -218,7 +227,8 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
-    <option name="LAST_COMMIT_MESSAGE" value="" />
+    <MESSAGE value="не более 3 запросов с одного IP в течении часа" />
+    <option name="LAST_COMMIT_MESSAGE" value="не более 3 запросов с одного IP в течении часа" />
   </component>
   <component name="debuggerHistoryManager">
     <expressions id="evaluateExpression">
@@ -332,8 +342,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/timeslot.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="749">
-          <caret line="85" lean-forward="true" selection-start-line="85" selection-end-line="85" />
+        <state relative-caret-position="530">
+          <caret line="76" column="100" selection-start-line="76" selection-start-column="100" selection-end-line="76" selection-end-column="100" />
         </state>
       </provider>
     </entry>
