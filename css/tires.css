@@ -1,0 +1,10 @@
+.time_button {
+     padding:0px;
+     margin:2px;
+     width: 10em;
+     height: 1.6em;
+     font-size: 1.5em;
+     font-weight: bolder;
+     border: 1px solid black;
+     border-radius:7px;
+}
