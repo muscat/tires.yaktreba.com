@@ -112,7 +112,8 @@ function book(slot_in) {
             if ( errorlevel == 'error' ) { alert('внутрішня помилка'); console.log(message); return false; }
             if ( errorlevel == 'alert' ) { alert('' + message); return false; }
 
-            console.log(OTP); alert("debug: OTP=" + OTP);
+            // DEBUG OTP
+            // console.log(OTP); alert("debug: OTP=" + OTP);
 
             // TODO: 2) если ответ "вы уже заебали своими запросами" - выводить соотв. сообщение
 
