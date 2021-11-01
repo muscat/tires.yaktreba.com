@@ -40,7 +40,7 @@ if (!$conn) {
 
 </head>
 <body>
-<table width=100% style='font-family:Tahoma, Geneva, Verdana, sans-serif'>
+<table width=100%>
     <thead>
         <tr>
             <th>#</th>
