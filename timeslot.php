@@ -87,7 +87,7 @@ switch ($action) {
 
 // DEBUG: file_put_contents('/tmp/query.log', $q  . "\r\n", FILE_APPEND);
         $result = mysqli_query($conn, $q);
-        if ( mysqli_num_rows($result) >= 3 ) { echo 'alert|Ви створюєте занадто багато запитів!|0000'; exit; }
+        if ( mysqli_num_rows($result) > 3 ) { echo 'alert|Ви створюєте занадто багато запитів :)|0000'; exit; }
 
 
         // TODO: check abuser (frequently asked for OTP while sms was already delivered but not entered)
@@ -99,7 +99,7 @@ switch ($action) {
             . '"' . ip() . '", '
             . '"' . date("Y-m-d", $date)  . '", '
             . $slot  . ', '
-            . '"' . $phone . '", '
+            . '"' .   substr(preg_replace('/\D/', '', $phone), -10)    . '", '
             . 50 . ')'; // 50 = "Получен запрос на визит"
         $result = mysqli_query($conn, $q);
         if ( ! $result ) {  echo "error|error #204: " . mysqli_error($conn) . '|0000'; exit; }
@@ -121,7 +121,7 @@ switch ($action) {
             . '"' . $newid . '", '
             . '"' . date("Y-m-d", $date)  . '", '
             . $slot  . ', '
-            . '"' . $phone . '", '
+            . '"' .   substr(preg_replace('/\D/', '', $phone), -10)    . '", '
             . 60 . ')'; // 60 = "SMS отправлена"
         $result = mysqli_query($conn, $q);
         if ( ! $result ) {  echo "error|error #205: " . mysqli_error($conn) . '|0000'; exit; }
@@ -147,7 +147,7 @@ switch ($action) {
         . '"' . ip() . '", '
         . '"' . date("Y-m-d", $date)  . '", '
         . $slot  . ', '
-        . '"' . $phone . '", '
+        . '"' .   substr(preg_replace('/\D/', '', $phone), -10)   . '", '
         . 80 . ')'; // 80 = "OTP введен правильно, заявка на визит принята (сразу создавать запись в списке нарядов и сообщить менеджеру)"
 
         $result = mysqli_query($conn, $q);

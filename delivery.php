@@ -36,7 +36,7 @@ $status   = isset($_POST['status'])   ? $_POST['status']     :  ""; // for repor
                     . '"' . $smsid . '", '
                     . '"' . $date  . '", '
                     . $timeslot  . ', '
-                    . '"' . $phone . '", '
+                    . '"' .   substr(preg_replace('/\D/', '', $phone), -10)    . '", '
                     . 70 . ')'; // 70 = "SMS доставлена"
 
             $result = mysqli_query($conn, $q);

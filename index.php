@@ -206,8 +206,8 @@ function  draw_timeslots(date) {
                 if ( (time + 60) > button_time ) {
                     // кнопка в прошлом, красим в серый, убираем обработчики
                     button_style = "background-color:grey";
-                    button_title = "";
-                    button_handler = "";
+                    button_title = "Це вже в минулому...";
+                    button_handler = 'alert("записуватить в минуле неможливо :)");';
                 }
                 else
                     // текущее время не наступило для кнопки. делаем перебор будущих ЗАНЯТЫХ таймслотов (из базы)
