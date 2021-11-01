@@ -24,7 +24,7 @@ $conn = mysqli_connect(DB_HOSTNAME, DB_USERNAME, DB_PASSWORD, DB_DATABASE);
 if (!$conn) { die("Connection failed: " . mysqli_connect_error()); }
 if ( $result = mysqli_query($conn, 'select * from settings') ) { foreach ($result as $row) {  ${$row['variable']} = $row['value']; } }
 
-/* теперь берутся из базы
+/* теперь настройки берутся из базы
 $timeslotsize = 40 * 60; // размер таймслота, в секундах
 $work_time_start = 8 * 60 * 60; // время начала рабочего дня (в секундах).
 
@@ -35,6 +35,7 @@ $working_days_of_week = 6; // максимальный номер рабочег
 $max_workplace = 2; // количество рабочих мест (постов)
 */
 echo "<script>var max_workplace=" . $max_workplace . ";</script>";
+
 
 
 ?>
@@ -296,7 +297,7 @@ echo "<script>var max_workplace=" . $max_workplace . ";</script>";
 </head>
 
 <body>
-    <h2 style='color:yellow'>запис на шиномонтаж Як Треба</h2>
+    <h2 style='color:yellow'>запис на шиномонтаж «Як Треба»<br>Рівне, Костромська, 25</h2>
     <div class=slider>
         <?php
 

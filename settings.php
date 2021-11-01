@@ -1,0 +1,92 @@
+<?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+
+// Configuration
+if (is_file('config.php')) {
+    require_once('config.php');
+}
+
+// mySnippets
+if (is_file('snippets.php')) {
+    require_once('snippets.php');
+}
+
+
+// connect to DB
+$conn = mysqli_connect(DB_HOSTNAME, DB_USERNAME, DB_PASSWORD, DB_DATABASE);
+if (!$conn) {
+    die("Connection failed: " . mysqli_connect_error());
+}
+
+
+# INIT VARS
+$login_from_db = $pass_from_db = '';
+
+# get form's data
+$login = isset($_POST['login'])   ?  $_POST['login']  :  "";
+$pass  = isset($_POST['pass'])    ?  $_POST['pass']   :  "";
+$action = isset($_POST['action'])  ?  $_POST['action'] :  "";
+
+# got params, save to DB
+if ($action == 'save') {
+    foreach ($_POST as $item => $value) {
+        $q = "update settings set value='" . $value . "' where variable='" . $item . "'";
+        // DEBUG echo $q . "<br>";
+        $result = mysqli_query($conn, $q);
+        if (!$result) {
+            echo "error|error #210: " . mysqli_error($conn) . '|0000';
+            exit;
+        }
+    }
+    echo "updated!<br>";
+    echo "<a href=/>Home</a>";
+    exit;
+}
+
+
+# AUTH by password
+$pass_validated = false;
+
+if ($result = mysqli_query($conn, "select * from access where login='" . $login . "';")) {
+    foreach ($result as $row) {
+        if ($row['password'] == md5($pass)) {
+            $pass_validated = true;
+            break;
+        }
+    }
+}
+
+# draw AUTH form
+if ($pass_validated != true) { ?>
+
+    <form method="POST">
+        <div style="position: fixed; /* or absolute */
+    top: 50%; left: 50%;
+    width: 200px; height:100px;
+    margin: -50px 0 0 -100px;">
+            <cpan style='text-align:center; font-family:Tahoma, Geneva, Verdana, sans-serif;'>шиномонтаж ЯкТреба<br>настройки</cpan>
+            <input type="text" name=login placeholder="login" autocomplete="off" autofocus>
+            <input type="password" name=pass placeholder="password">
+            <input type="submit">
+        </div>
+    </form>
+
+<?php
+    exit;
+}
+
+
+# edit settings form
+echo "<form method=POST>";
+echo "<input type=hidden name=action value=save>";
+if ($result = mysqli_query($conn, "select * from settings")) {
+    foreach ($result as $key => $value) {
+        echo "<input type=text name='" . $value['variable'] . "' value='" . $value['value'] . "'>" . $value['comment'] . "<br>";
+    }
+    echo "<input type=submit>";
+    echo "<input type=button onclick='history.back();' value=Cancel>";
+}
+echo "</form>";
