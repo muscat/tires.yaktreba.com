@@ -33,3 +33,19 @@ define('DB_PREFIX',   '');
 
 // set timezone
 date_default_timezone_set('Europe/Kiev');
+
+
+
+// read settings from DB and propagate to variables
+$conn = mysqli_connect(DB_HOSTNAME, DB_USERNAME, DB_PASSWORD, DB_DATABASE);
+if (!$conn) { die("Connection failed: " . mysqli_connect_error()); }
+if ( $result = mysqli_query($conn, 'select * from settings') ) { foreach ($result as $row) {  ${$row['variable']} = $row['value']; } }
+/* 
+$timeslotsize = 40 * 60; // размер таймслота, в секундах
+$work_time_start = 8 * 60 * 60; // время начала рабочего дня (в секундах).
+$work_time_end = 20 * 60 * 60 - $timeslotsize;  // время конца рабочего дня - точнее время, когда ещё можно принимать заказ (в секундах). // TODO: учитывать разную продолжительность рабочего дня в разные дни недели и пред-праздничные
+$working_days_of_week = 6; // максимальный номер рабочего дня в неделе (сколько рабочих дней в неделе)
+$max_workplace = 2; // количество рабочих мест (постов)
+*/
+
+

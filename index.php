@@ -17,23 +17,7 @@ if (is_file('snippets.php')) {
     require_once('snippets.php');
 }
 
-
-// брать из настроек из базы
-// connect to DB
-$conn = mysqli_connect(DB_HOSTNAME, DB_USERNAME, DB_PASSWORD, DB_DATABASE);
-if (!$conn) { die("Connection failed: " . mysqli_connect_error()); }
-if ( $result = mysqli_query($conn, 'select * from settings') ) { foreach ($result as $row) {  ${$row['variable']} = $row['value']; } }
-
-/* теперь настройки берутся из базы
-$timeslotsize = 40 * 60; // размер таймслота, в секундах
-$work_time_start = 8 * 60 * 60; // время начала рабочего дня (в секундах).
-
-$work_time_end = 20 * 60 * 60 - $timeslotsize;  // время конца рабочего дня - точнее время, когда ещё можно принимать заказ (в секундах). 
-// TODO: учитывать разную продолжительность рабочего дня в разные дни недели и пред-праздничные
-
-$working_days_of_week = 6; // максимальный номер рабочего дня в неделе (сколько рабочих дней в неделе)
-$max_workplace = 2; // количество рабочих мест (постов)
-*/
+# вставить значение max_workplace для javascript ДО запуска остальных скриптов
 echo "<script>var max_workplace=" . $max_workplace . ";</script>";
 
 
@@ -95,12 +79,13 @@ echo "<script>var max_workplace=" . $max_workplace . ";</script>";
         function book(slot_in) {
             let date = Number(slot_in.substr(slot_in.indexOf('-day-') + 5, 10));
             let slot = Number(slot_in.substr(slot_in.indexOf('-day-') + 16, 5));
+            let hour = Math.floor(slot / 3600); let minutes = (slot - (hour * 3600)) / 60; if (minutes < 10) minutes = "0" + minutes;
 
             let phone = "+380";
             phone_validated = false;
             while (!phone_validated) { // validate phone
                 if (phone === null) return false; // отмена ввода по esc
-                phone = prompt("Введіть, будь-ласка, Ваш номер телефону для запису на шиномонтаж", phone);
+                phone = prompt("Запис на " + hour + ":" + minutes + ".\n\nВведіть, будь-ласка, Ваш номер телефону: ", phone);
                 phone_validated = /^(?:\+\d{2})?\d{10}(?:,(?:\+\d{2})?\d{10})*$/gm.test(phone);
             };
 

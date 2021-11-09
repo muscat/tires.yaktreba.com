@@ -40,37 +40,52 @@ if (!$conn) {
 
 </head>
 <body>
-<table width=100%>
-    <thead>
-        <tr>
-            <th>#</th>
-            <th>date</ht>
-            <th>phone</ht>
-            <th>status</th>
-        </tr>
-    </thead>
-    <tbody>
 <?php
 
+$color1='#55aa55'; $color2='#88cc88';
 
-$color1='#fff462'; $color2='#ffffff';
+// TODO: брать ближайшие 7 дней и выводить таймслоты в ширину (горизонтально, таймслот и под ним записанные телефоны), а дни - сверху вниз
 
-$q="select * from booking where status>=80 and date>='" . date('Y-m-d') . "' order by id limit 100";
+$now_epoch=date('U', strtotime('00:00'));
+for ($day=0; $day < 7; $day++) {
+
+$q="select * from booking where status>=80 and date='" . date('Y-m-d', $now_epoch + $day * 86400) . "' order by date,id limit 100";
 if ($result = mysqli_query($conn, $q)) {
+    $prev_day=$today='';
+
     foreach ($result as $row) {
-        echo "<tr style='background-color:" . $color1 . "'>"; list($color1,$color2) = array($color2,$color1);
-        echo "<td>" . $row['id'] . "</td>";
-        echo "<td>" . $row['date'] . "</td>";
-        echo "<td>" . $row['phone'] . "</td>";
-        echo "<td>" . $row['status'] . "</td>";
-        echo "</tr>";
+        $today = $row['date'];
+
+        if ( $prev_day != $today ) { // новый день
+            echo "<br class=admin_booking_timeslot_end />";
+            echo "<h3 class=admin_booking_day style='border:solid 2px white; border-bottom-color:" . $color1 . "'><b>" . $weekdaynames[date('N', strtotime($today))] . date(', d.m.Y', strtotime($today)) . "</b></h3><br>"; 
+            $prev_day=$today; /* list($color1,$color2) = array($color2,$color1);  */
         }
+
+        // перебор таймслотов от начала и до конца рабочего дня
+        $horiz_cursor=$work_time_start;
+        while ($horiz_cursor < $work_time_end) {
+            echo "<span class=admin_booking_timeslot>";
+
+            echo "<div style='font-family: Tahoma; font-size:0.9em; width:100%; background-color:#88cc88'><b>";
+            echo date("H:i", $now_epoch + $horiz_cursor);
+            echo "</b></div><br>";
+            
+            echo "0673633660";
+            $horiz_cursor+=$timeslotsize;
+            echo "</span>";
+        }
+        echo "<br class=admin_booking_timeslot_end />";
+        
+
+    }
+    
+    /* $row['id']         $row['date']          $row['phone']          $row['status']          echo "</tr>"; */
+
 }
 
-
+}
 
 ?>
-    </tbody>
-</table>
 </body>
 </html>

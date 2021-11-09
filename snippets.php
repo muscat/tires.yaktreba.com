@@ -4,6 +4,7 @@
 // EOL depends on run method (system EOL or "<br>"
 $eol = (isset($_SERVER['SHELL'])) ? PHP_EOL : "<br />";
 
+// now
 $nowYMDHS = date("Y/m/d H:i:s");
 
 
@@ -18,6 +19,9 @@ function ip()
     }
     return $ip;
 }
+
+// weekdays array
+$weekdaynames=['неділя', 'понеділок', 'вівторок', 'середа', 'четвер', 'п\'ятниця', 'субота', 'неділя'];
 
 
 ?>
