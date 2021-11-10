@@ -26,8 +26,8 @@ if (!$conn) {
 $login_from_db = $pass_from_db = '';
 
 # get form's data
-$login = isset($_POST['login'])   ?  $_POST['login']  :  "";
-$pass  = isset($_POST['pass'])    ?  $_POST['pass']   :  "";
+$login = isset($_POST['login'])    ?  $_POST['login']  :  "";
+$pass  = isset($_POST['pass'])     ?  $_POST['pass']   :  "";
 $action = isset($_POST['action'])  ?  $_POST['action'] :  "";
 
 # got params, save to DB

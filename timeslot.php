@@ -157,13 +157,13 @@ switch ($action) {
         }
 
         // send SMS with approve
-        $hour=$slot % 3600; $minute=($slot - ($hour * 3600)) / 45;
+        $hour=$slot % 3600; $minute=($slot - ($hour * 3600)) / 60;
         $ctx = stream_context_create(array('http' => array('timeout' => 30)));
         $url="https://smsc.ua/sys/send.php?fmt=1&login=yaktreba&psw=68AWtBVyX6WsrDt6&phones=" . $phone .  "&mes=Чекаємо Ваш автомобіль на шиномонтаж " . date('j.m.Y', $date) . " о " . date("H:i", $date + $slot) . ". Гарного дня!";
         $response = file_get_contents($url, 0, $ctx);
         [ $newid, $sendresult ] = explode(',', $response);
         // TODO: check SMS ISP answer and do something
-        
+
 
         // report result
         echo 'ok' . '|' . date("d.m.Y", $date ) . '|' . date("H:i", $date + $slot);

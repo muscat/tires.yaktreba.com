@@ -195,7 +195,7 @@ echo "<script>var max_workplace=" . $max_workplace . ";</script>";
 
                         // дефолтный цвет доступных кнопок (зеленый)
                         button_style = "background-color:#11be7b";
-                        button_title = "доступно до броньювання";
+                        button_title = "доступно до бронювання";
                         button_handler = "book('" + occupied.id + "');";
 
                         // если текущее время больше времени таймслота - дизаблить кнопку в серый
@@ -206,7 +206,7 @@ echo "<script>var max_workplace=" . $max_workplace . ";</script>";
                             // кнопка в прошлом, красим в серый, убираем обработчики
                             button_style = "background-color:grey";
                             button_title = "Це вже в минулому...";
-                            button_handler = 'alert("записуватить в минуле неможливо :)");';
+                            button_handler = 'alert("запис на цей час вже минув :)");';
                         } else
                             // текущее время не наступило для кнопки. делаем перебор будущих ЗАНЯТЫХ таймслотов (из базы)
                             for (dbslot = 0; dbslot < slots.length; dbslot++) {
@@ -225,7 +225,7 @@ echo "<script>var max_workplace=" . $max_workplace . ";</script>";
                                     } else {
                                         // AVAILABLE
                                         button_style = "background-color:#6cbe11";
-                                        button_title = 'вже заброньовано на ' + get_phones_on_timeslot_crlf(slots, slots[dbslot]['timeslot']);
+                                        button_title = 'на цей час є запис для:' + get_phones_on_timeslot_crlf(slots, slots[dbslot]['timeslot']);
                                         button_handler = "book('" + occupied.id + "');";
                                         break;
                                     }
@@ -357,7 +357,7 @@ echo "<script>var max_workplace=" . $max_workplace . ";</script>";
         ?>
 
     </div>
-    <h3 center style='color:white'>Бажаєте скасувати або перенести візит ?<br>Телефонуйте менеджерам +380961903030</h3>
+    <h3 center style='color:white'>Бажаєте скасувати або перенести візит ?<br>Телефонуйте менеджерам 096 190 30 30</h3>
 </body>
 
 </html>
