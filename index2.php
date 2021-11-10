@@ -27,11 +27,9 @@ echo "<script>var max_workplace=" . $max_workplace . ";</script>";
 <html>
 
 <head>
-    <title>ЯкТреба &bull; Шиномонтаж</title>
+    <title>bxSlider test</title>
 
     <link rel="icon" type="image/png" href="favicon.png" />
-
-    <meta name="robots" content="noindex, nofollow">
 
     <meta http-equiv="cache-control" content="max-age=0" />
     <meta http-equiv="cache-control" content="no-cache" />
@@ -239,8 +237,8 @@ echo "<script>var max_workplace=" . $max_workplace . ";</script>";
                         // применяем стиль для текущей кнопки
                         occupied.style = button_style;
                         occupied.title = button_title;
-                        occupied.setAttribute("onClick", button_handler);  
-                        // document.getElementById(occupied).addEventListener("click", () => alert('test'));
+                        // occupied.setAttribute("onClick", button_handler);  
+                        document.getElementById(occupied.id).addEventListener("click", () => alert('Got a click!') );
 
                     } // end перебора кнопок
                 }
@@ -287,7 +285,6 @@ echo "<script>var max_workplace=" . $max_workplace . ";</script>";
 </head>
 
 <body>
-    <h2 style='color:yellow'>запис на шиномонтаж «Як Треба»<br>Рівне, Костромська, 25</h2>
     <div class=slider>
         <?php
 
@@ -344,7 +341,7 @@ echo "<script>var max_workplace=" . $max_workplace . ";</script>";
                 $is_dst = date("I", $this_day_epoch_begin); // 1 - летнее время, 0 - нет
 
                 echo "<div class=schedule_column id='day-" . $this_day_epoch_begin . "'>";
-                echo "<h3><b>" . "на " . $weekday_shift[$shift] . $weekday_names[$day_of_week + $week_overflow * 7] . ' ' . date('d.m.Y', $date) . "</b></h3>";
+                echo "<h3><b>" . date('d.m.Y', $date) . "</b></h3>";
 
                 do {
                     $tmp_a = $this_day_epoch_begin + $timeslot;
@@ -362,7 +359,6 @@ echo "<script>var max_workplace=" . $max_workplace . ";</script>";
         ?>
 
     </div>
-    <h3 center style='color:white'>Бажаєте скасувати або перенести візит ?<br>Телефонуйте менеджерам 096 190 30 30</h3>
 </body>
 
 </html>

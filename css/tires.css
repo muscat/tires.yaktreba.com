@@ -13,39 +13,32 @@
      border-radius:7px;
 }
 
-table {
-     font-size: 1.0em;
-     border-spacing: 0;
-     border-collapse: collapse;
-}
 
-table td, table th {
-/*     padding: 0; */
-     text-align: left;
-     padding: 5px;
-}
-
-.admin_booking_day {
-     font-weight: lighter;
-     font-size: 1em;
-     padding-top: 0.5em;
-     text-indent: 10px;
-}
-
-.admin_booking_timeslot {
+.content {
+     width: 90%;
      text-align: center;
-     width: 100px;
-     height: 60px;
-     float: left;
-     border: solid 2px white;
+     display: flex;
+     flex-wrap: wrap;
 }
 
-.admin_booking_timeslot_end {
-     clear:both;
+.content div {
+    min-height: 3em;
+    width: 100px;
 }
 
-.admin_booking_timeslot_time {
-     font-weight: bold;
-     width:100%;
+.item_time {
+     width:100%; 
      background-color:#88cc88;
+     margin:0;
+     font-size: smaller;
+     line-height: 1.8em;
 }
+
+.item_phone {
+     font-size: smaller;
+}
+
+.item_block {
+     padding-right: 3px;
+}
+

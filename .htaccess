@@ -1,0 +1,1 @@
+SetEnvIfNoCase User-Agent "^Googlebot" search_bot

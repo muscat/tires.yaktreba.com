@@ -14,14 +14,6 @@ if (is_file('snippets.php')) {
     require_once('snippets.php');
 }
 
-
-// connect to DB
-$conn = mysqli_connect(DB_HOSTNAME, DB_USERNAME, DB_PASSWORD, DB_DATABASE);
-if (!$conn) {
-    die("Connection failed: " . mysqli_connect_error());
-}
-
-
 # INIT VARS
 $login_from_db = $pass_from_db = '';
 
@@ -42,7 +34,7 @@ if ($action == 'save') {
         }
     }
     echo "updated!<br>";
-    echo "<a href=/>Home</a>";
+    echo "<a href=/dashboard.php>назад</a>";
     exit;
 }
 
