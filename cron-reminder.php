@@ -33,7 +33,7 @@ foreach ($result as $timeslot) {
 if ( $timeslot['timeslot'] + $start_of_today_epoch - $now_epoch - $timeslotsize < 61 && $timeslot['timeslot'] + $start_of_today_epoch - $now_epoch - $timeslotsize > 0 ) 
     { 
         $ctx = stream_context_create(array('http' => array('timeout' => 30)));
-        $url="https://smsc.ua/sys/send.php?fmt=1&login=yaktreba&psw=68AWtBVyX6WsrDt6&phones=" . $timeslot['phone'] .  "&mes=Нагадування:%0aШиномонтаж%0aна " . date("H:i", $start_of_today_epoch + $timeslot['timeslot']) . "%0aКостромська, 25%0a0961903030";
+        $url="https://smsc.ua/sys/send.php?fmt=1&login=yaktreba&psw=68AWtBVyX6WsrDt6&phones=" . $timeslot['phone'] .  "&mes=Нагадування:%0a- шиномонтаж%0a- на " . date("H:i", $start_of_today_epoch + $timeslot['timeslot']) . "%0a- Костромська, 25%0a%0a0961903030";
         $response = file_get_contents($url, 0, $ctx);
         // TODO: check response
         // [ $newid, $sendresult ] = explode(',', $response);

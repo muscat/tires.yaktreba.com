@@ -18,7 +18,11 @@ if (is_file('snippets.php')) {
 }
 
 # вставить значение max_workplace для javascript ДО запуска остальных скриптов
-echo "<script>var max_workplace=" . $max_workplace . ";</script>";
+echo "<script>
+var max_workplace=" . $max_workplace . ";
+var timeslotsize=" . $timeslotsize . ";
+var booking_handicap=" . $booking_handicap . ";
+</script>";
 
 
 
@@ -206,11 +210,12 @@ echo "<script>var max_workplace=" . $max_workplace . ";</script>";
                         let time = Math.round(Date.now() / 1000);
                         button_time = Number(occupied.id.substr(occupied.id.indexOf('-day-') + 5, 10)) + Number(occupied.id.substr(occupied.id.indexOf('-day-') + 16, 5));
 
-                        if ((time + 60) > button_time) {
+                        
+                        if ((time + timeslotsize * booking_handicap) > button_time) {
                             // кнопка в прошлом, красим в серый, убираем обработчики
                             button_style = "background-color:grey";
-                            button_title = "Це вже в минулому...";
-                            button_handler = 'alert("запис на цей час вже минув :)");';
+                            button_title = "На цей час вже не можна записуватись...";
+                            button_handler = 'alert("запис на цей час вже неможливий :)");';
                         } else
                             // текущее время не наступило для кнопки. делаем перебор будущих ЗАНЯТЫХ таймслотов (из базы)
                             for (dbslot = 0; dbslot < slots.length; dbslot++) {

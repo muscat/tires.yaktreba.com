@@ -12,9 +12,9 @@ if (is_file('snippets.php')) {
 
 // access only for self ajax queries
 define('IS_AJAX', isset($_SERVER['HTTP_X_REQUESTED_WITH']) &&      strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest');
-if(!IS_AJAX) {die('Restricted access');}
+#if(!IS_AJAX) {die('Restricted access');}
 $pos = strpos($_SERVER['HTTP_REFERER'],getenv('HTTP_HOST'));
-if($pos===false) die('Restricted access');
+#if($pos===false) die('Restricted access');
 
 // connect to DB
 $conn = mysqli_connect(DB_HOSTNAME, DB_USERNAME, DB_PASSWORD, DB_DATABASE);
@@ -35,7 +35,7 @@ switch ($action) {
         $valid_d = date('d', $date);
         if ( ! checkdate($valid_m, $valid_d, $valid_y) ) die("invalid date passed!");
 
-        $q='select timeslot, status, phone from booking where date="' . date("Y-m-d", $date) . '" and status > 70';
+        $q='select timeslot, status, phone from booking where date="' . date("Y-m-d", $date) . '" and (status > 70 or disabled = 1)';
 
         $myArray=array();
         if ( $result = mysqli_query($conn, $q) ) {
@@ -171,6 +171,29 @@ switch ($action) {
         exit;
 
 
+
+    case 'switch_timeslot':
+
+        $date  = isset($_GET['date'])   ?  $_GET['date']   :  "";
+        $slot  = isset($_GET['slot'])   ?  $_GET['slot']   :  "";
+
+        $q="select id, disabled from booking where date='" . date("Y-m-d", $date) . "' and timeslot='" . $slot . "'";
+        $result = mysqli_query($conn, $q);
+        if ( ! $result ) {  echo "error|error #231: " . mysqli_error($conn) . '|0000'; exit; }
+        $data=array(); while($row = $result->fetch_array()) { $data[] = $row; }
+
+        # negate value
+        $disabled = ( $data[0]['disabled'] == 1 ? 0 : 1 );
+
+        # update value (insert or delete)
+        $q = "insert into booking (timestamp, ip, date, timeslot, phone, status, disabled) values ('" . $nowYMDHS . "', '127.0.0.1', '" . date('Y-m-d', $date) . "','" . $slot . "', 'службове', '80', '" . $disabled . "')";
+        if ( $data[0]['id'] > 0 ) $q = "delete from booking where id='" . $data[0]['id'] . "'";
+
+        $result = mysqli_query($conn, $q);
+        if (!$result) { echo "error|error #232: " . mysqli_error($conn) . '|0000'; exit; }
+
+        echo 'ok' . '||0000';
+        exit;
 
 
 

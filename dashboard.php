@@ -77,6 +77,39 @@ exit;
     <meta name="viewport" content="width=device-width, maximum-scale=1, minimum-scale=1" />
     <link rel="stylesheet" type="text/css" href="css/tires.css" media="all" />
 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="js/webAudioApiForDesigners.js"></script>
+
+
+    <script>
+        function timeslot_switch(date, timeslot) {
+
+        $.ajax({
+                url: "timeslot.php?action=switch_timeslot&date=" + date + '&slot=' + timeslot,
+                method: 'get',
+                cache: false,
+                success: function(result) {
+                    console.log('result=' + result);
+
+                    // результат делить на токены, проверять errorlevel
+                    let [errorlevel, message, OTP] = result.split('|');
+                    if (errorlevel == 'error') {
+                        alert('внутрішня помилка');
+                        console.log(message);
+                        return false;
+                    }
+                    if (errorlevel == 'alert') {
+                        alert('' + message);
+                        return false;
+                    }
+                    if (errorlevel == 'ok') {
+                        window.location.reload();
+                    }
+                }
+            });
+        }
+    </script>
+
 
 </head>
 <body>
@@ -88,33 +121,51 @@ $now_epoch=date('U', strtotime('00:00'));
 for ($day=0; $day < 10; $day++) {
 $day_counter = $now_epoch + $day * 86400;
 
-    // все записи на это число
+    // получить из базы все записи на это число
     $q="select * from booking where status>=80 and date='" . date('Y-m-d', $day_counter) . "' order by id";
     $result = mysqli_query($conn, $q);
     if ( ! $result ) {  echo "error|error #211: " . mysqli_error($conn) . '|0000'; exit; }
     if ( mysqli_num_rows($result) <= 0 ) { continue; } // если записей на этот день нет - пропускаем этот день
 
+    // данные из базы - в массив
+    $data=array(); while($row = $result->fetch_array()) { $data[] = $row; }
+
+    // заголовок дня и div
     echo "<h4><b>" . $weekdaynames[date('N', $day_counter)] . date(', d.m.Y', $day_counter) . "</b></h4>";
     echo "<div class=content>";
 
+    
     // перебор таймслотов от начала и до конца рабочего дня
     $horiz_cursor=$work_time_start;
     while ($horiz_cursor < $work_time_end) {
-        echo "<div class=item_block>";
-        echo "<p class=item_time><b>" . date("H:i", $now_epoch + $horiz_cursor) . "</b></p>";
+     
+        $is_timeslot_disabled=0; $timeslot_highlight=''; $timeslot_checked='';
+        foreach ($data as $tmp) if ( $tmp['timeslot'] == $horiz_cursor && $tmp['disabled'] == 1 ) { $is_timeslot_disabled=1; $timeslot_highlight='background-color:grey;'; $timeslot_checked='checked'; break; }
+
+        // timeslot div block
+        echo "<div class=item_block name=" . date("H:i", $day_counter + $horiz_cursor) . ">";
+
+        // timeslot header
+        echo "<p class=item_time style='" . $timeslot_highlight . "'><b>" . date("H:i", $now_epoch + $horiz_cursor) . 
+        "</b><input type=checkbox class=check_styled id=" . $day_counter . '-' . $horiz_cursor . " onclick=timeslot_switch('" . $day_counter . "','" . $horiz_cursor . "');" . $timeslot_checked . "></p>";
 
         # вывод телефонов, записанных на этот таймслот
-        foreach ($result as $timeslot) {
-            if ( $timeslot['timeslot'] > $horiz_cursor - $timeslotsize && $timeslot['timeslot'] < $horiz_cursor + $timeslotsize) { // если курсор попадает между соседними таймслотами
-            $highlight="";
-            if ( date('U') - date('U', strtotime($timeslot['timestamp'])) < 600 ) $highlight="background-color:orange;"; // недавние обращение (меньше 600 секунд) - подсвечивать
-            echo "<span class=item_phone style='" . $highlight . "; '" .
-            " title='заказ поступил " . date('d.m.Y H:i', strtotime($timeslot['timestamp'])) . ' на таймслот ' . date("H:i", $day_counter + $timeslot['timeslot'])  . "'>" . 
-            $timeslot['phone'] . "</span><input type=checkbox><br>";
+        foreach ($data as $phones) {
+            // приходится выкручиваться и ловить записи по таймслотам, которые "съехали" из-за смены размера таймслота или изменения времени начала дня
+            if ( $phones['timeslot'] > $horiz_cursor - $timeslotsize && $phones['timeslot'] < $horiz_cursor + $timeslotsize) {
+            // недавние обращение (меньше 600 секунд) - подсвечивать
+            $phone_highlight=""; if ( date('U') - date('U', strtotime($phones['timestamp'])) < 600 ) $phone_highlight="background-color:orange;"; 
+            
+            // недавние обращения - озвучивать (90 меньше чем 2*60 секунд, то есть звук сыграет 1 раз)
+            if ( date('U') - date('U', strtotime($phones['timestamp'])) < 90 ) echo "<script> var context = initializeNewWebAudioContext();context.loadSound('sounds/fresh.ogg', 'fresh'); context.playSound('fresh');  </script>";
+            
+            echo "<span class=item_phone style='" . $phone_highlight . "; '" .
+            " title='заказ поступил " . date('d.m.Y H:i', strtotime($phones['timestamp'])) . ' на таймслот ' . date("H:i", $day_counter + $phones['timeslot'])  . "'>" . 
+            $phones['phone'] . "</span><input type=checkbox class=check_styled><br>";
             }
         }
 
-        $horiz_cursor+=$timeslotsize;
+        $horiz_cursor=$horiz_cursor + $timeslotsize;
         echo "</div>"; /* end div "item" */
     }
     echo "</div>"; /* end div "content " */
