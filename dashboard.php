@@ -125,7 +125,9 @@ $day_counter = $now_epoch + $day * 86400;
     $q="select * from booking where status>=80 and date='" . date('Y-m-d', $day_counter) . "' order by id";
     $result = mysqli_query($conn, $q);
     if ( ! $result ) {  echo "error|error #211: " . mysqli_error($conn) . '|0000'; exit; }
-    if ( mysqli_num_rows($result) <= 0 ) { continue; } // если записей на этот день нет - пропускаем этот день
+
+    // отделяем недели
+    if ( date('N', $day_counter) > $working_days_of_week) { echo "<br><br>"; continue; } 
 
     // данные из базы - в массив
     $data=array(); while($row = $result->fetch_array()) { $data[] = $row; }
