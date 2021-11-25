@@ -149,7 +149,7 @@ $day_counter = $now_epoch + $day * 86400;
 
         // timeslot header
         echo "<p class=item_time style='" . $timeslot_highlight . "'><b>" . date("H:i", $now_epoch + $horiz_cursor) . 
-        "</b><input type=checkbox class=check_styled id=" . $day_counter . '-' . $horiz_cursor . " onclick=timeslot_switch('" . $day_counter . "','" . $horiz_cursor . "');" . $timeslot_checked . "></p>";
+        "</b><input type=checkbox class=check_styled id=" . $day_counter . '-' . $horiz_cursor . " onclick=timeslot_switch('" . $day_counter . "','" . $horiz_cursor . "'); " . $timeslot_checked . "></p>";
 
         # вывод телефонов, записанных на этот таймслот
         foreach ($data as $phones) {

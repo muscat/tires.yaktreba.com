@@ -109,7 +109,7 @@ var booking_handicap=" . $booking_handicap . ";
                     // результат делить на токены, проверять errorlevel
                     let [errorlevel, message, OTP] = result.split('|');
                     if (errorlevel == 'error') {
-                        alert('внутрішня помилка');
+                        alert('внутрішня помилка' + message);
                         console.log(message);
                         return false;
                     }
@@ -321,6 +321,13 @@ var booking_handicap=" . $booking_handicap . ";
         # $epoch_today=date('U', strtotime('30 october 2021 00:00:00'));  // 00:00 текущей даты (в виде unix epoch), в качестве точки отсчета
 
 
+        // получить список дат праздничных дней
+        $q_holiday='select distinct * from holiday';
+        $result_holiday = mysqli_query($conn, $q_holiday);
+        if ( ! $result_holiday ) {  echo "error|error #101: " . mysqli_error($conn) . '|0000'; exit; }
+        $holidays=array(); while($row = $result_holiday->fetch_array()) { $holidays[] = $row[0]; }
+        print_r($holidays);
+
 
         // ------------ [ перебираем дни формируя список из 7 рабочих дней ] ------------
         do {
@@ -337,7 +344,8 @@ var booking_handicap=" . $booking_handicap . ";
             if (($nextweek == 1) and $weekday_today < 4) $week_overflow = 1;                               // если был переход через воскресение и начало перебора меньше четверга - писать "на следующей неделе"
             if (($nextweek == 1) and abs($weekday_today - $check_today) > 5) $week_overflow = 1;  // если был переход через воскресение и разница между началом и предполагаемым днем больше 5 дней - писать "на следующей неделе"
 
-            // TODO: искать по in_array попадает ли на день праздник (список - из базы)
+            // искать по in_array попадает ли на день праздник (список - из базы)
+            if ( in_array( date('Y-m-d', $date), $holidays) ) { $count++; continue; }
 
             // если текущий день цикла - будний день, выводим на экран
             if ($day_of_week <= $working_days_of_week) {

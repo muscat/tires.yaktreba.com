@@ -60,17 +60,17 @@ switch ($action) {
         $phone = isset($_GET['phone'])  ?  $_GET['phone']  :  "";
 
         // check already booked/scheduled phone on this day/slot
-        $q="select * from booking where date='" . date("Y-m-d", $date) . "' and phone like '%" . substr(preg_replace('/\D/', '', $phone), -10) . "' and timeslot='" . $slot . "' and status > 60";
+        $q="select * from booking where date='" . date("Y-m-d", $date) . "' and phone like '%" . substr(preg_replace('/\D/', '', $phone), -10) . "' and timeslot='" . $slot . "' and status >= 80";
         $result = mysqli_query($conn, $q);
         if ( ! $result ) {  echo "error|error #202: " . mysqli_error($conn) . '|0000'; exit; }
         if ( mysqli_num_rows($result) >= 1 ) { echo 'alert|Ви вже записані на цей день та цей час!|0000'; exit; }
 
 
         // check squatter phone on this day
-        $q="select * from booking where date='" . date("Y-m-d", $date) . "' and phone like '%" . substr(preg_replace('/\D/', '', $phone), -10) ."' and status > 70";
+        $q="select * from booking where date='" . date("Y-m-d", $date) . "' and phone like '%" . substr(preg_replace('/\D/', '', $phone), -10) ."' and status >= 70";
         $result = mysqli_query($conn, $q);
         if ( ! $result ) {  echo "error|error #203: " . mysqli_error($conn) . '|0000'; exit; }
-        if ( mysqli_num_rows($result) >= 3 ) { echo 'alert|У Вас занадто багато записів на цей день!|0000'; exit; }
+        if ( mysqli_num_rows($result) >= 3 ) { echo 'alert|У Вас занадто багато броньювань на цей день!|0000'; exit; }
 
 
         // TODO: проверять, оставлял ли он уже wish на этот день (
@@ -84,23 +84,36 @@ switch ($action) {
 
         // с одного IP не более 3 запросов в час
         $q="select * from booking where status >= 50 and timestamp > '" . date('Y/m/d H:i:s', date('U') - 3600) . "' and ip='" . ip() . "'";
-
-// DEBUG: file_put_contents('/tmp/query.log', $q  . "\r\n", FILE_APPEND);
+        // DEBUG: file_put_contents('/tmp/query.log', $q  . "\r\n", FILE_APPEND);
         $result = mysqli_query($conn, $q);
-        if ( mysqli_num_rows($result) > 3 ) { echo 'alert|Ви створюєте занадто багато запитів :)|0000'; exit; }
+        if ( mysqli_num_rows($result) > 3 ) { echo 'alert|Ви створюєте занадто багато запитів (ip)|0000'; exit; }
 
 
-        // TODO: check abuser (frequently asked for OTP while sms was already delivered but not entered)
+        
+        // (check for accidental escape)
+        // проверить: отправляли мы уже SMS (60) или нет. если да, но нет записи с 80 - достать из базы ранее отправленный пароль и ждать ввода OTP
+        // тем временем, по cron-у искать записи, у которых есть 50 и 60, но нет 70. все такие записи, старше ХХ минут - удалять
+        $q="select * from booking where date='" . date("Y-m-d", $date) . "' and timeslot=" . $slot . " and phone like '%" . substr(preg_replace('/\D/', '', $phone), -10) ."' and status = 60 and NOT status >= 70";
+        $result = mysqli_query($conn, $q);
+        if ( ! $result ) {  echo "error|error #206: " . mysqli_error($conn) . '|0000'; exit; }
+        if ( mysqli_num_rows($result) > 0 ) { 
+        
+        // есть запись про отправленную SMS без введенного OTP. берем из базы тот OTP и повторно возвращаем клиенту для ввода
+        $data=array(); while($row = $result->fetch_array()) { $data[] = $row; }
+        echo 'ok||' . $data[0]['OTP'];
+        exit;
+        }
+
 
 
         // insert "wish" into DB
-        $q='insert into booking(timestamp, ip, date, timeslot, phone, status) values ("'
+        $q='insert into booking(timestamp, ip, date, timeslot, phone, status, OTP) values ("'
             . $nowYMDHS . '", '
             . '"' . ip() . '", '
             . '"' . date("Y-m-d", $date)  . '", '
             . $slot  . ', '
             . '"' .   substr(preg_replace('/\D/', '', $phone), -10)    . '", '
-            . 50 . ')'; // 50 = "Получен запрос на визит"
+            . 50 . ', "")'; // 50 = "Получен запрос на визит"
         $result = mysqli_query($conn, $q);
         if ( ! $result ) {  echo "error|error #204: " . mysqli_error($conn) . '|0000'; exit; }
 
@@ -115,14 +128,15 @@ switch ($action) {
         $response = file_get_contents($url, 0, $ctx);
         [ $newid, $sendresult ] = explode(',', $response);
 
-        // insert "sms-sent" into DB
-        $q='insert into booking(timestamp, ip, date, timeslot, phone, status) values ("'
+        // insert "sms-sent" into DB (with OTP)
+        $q='insert into booking(timestamp, ip, date, timeslot, phone, status, OTP) values ("'
             . $nowYMDHS . '", '
             . '"' . $newid . '", '
             . '"' . date("Y-m-d", $date)  . '", '
             . $slot  . ', '
             . '"' .   substr(preg_replace('/\D/', '', $phone), -10)    . '", '
-            . 60 . ')'; // 60 = "SMS отправлена"
+            . 60 . ', "'
+            . $OTP . '")'; // 60 = "SMS отправлена"
         $result = mysqli_query($conn, $q);
         if ( ! $result ) {  echo "error|error #205: " . mysqli_error($conn) . '|0000'; exit; }
 
@@ -142,13 +156,13 @@ switch ($action) {
         $phone = isset($_GET['phone'])  ?  $_GET['phone']  :  "";
 
         // insert into 'booking'
-        $q='insert into booking(timestamp, ip, date, timeslot, phone, status) values ("'
+        $q='insert into booking(timestamp, ip, date, timeslot, phone, status, OTP) values ("'
         . $nowYMDHS . '", '
         . '"' . ip() . '", '
         . '"' . date("Y-m-d", $date)  . '", '
         . $slot  . ', '
         . '"' .   substr(preg_replace('/\D/', '', $phone), -10)   . '", '
-        . 80 . ')'; // 80 = "OTP введен правильно, заявка на визит принята (сразу создавать запись в списке нарядов и сообщить менеджеру)"
+        . 80 . ', "")'; // 80 = "OTP введен правильно, заявка на визит принята (сразу создавать запись в списке нарядов и сообщить менеджеру)"
 
         $result = mysqli_query($conn, $q);
         if ( ! $result ) {
@@ -186,7 +200,7 @@ switch ($action) {
         $disabled = ( $data[0]['disabled'] == 1 ? 0 : 1 );
 
         # update value (insert or delete)
-        $q = "insert into booking (timestamp, ip, date, timeslot, phone, status, disabled) values ('" . $nowYMDHS . "', '127.0.0.1', '" . date('Y-m-d', $date) . "','" . $slot . "', 'службове', '80', '" . $disabled . "')";
+        $q = "insert into booking (timestamp, ip, date, timeslot, phone, status, disabled, OTP) values ('" . $nowYMDHS . "', '127.0.0.1', '" . date('Y-m-d', $date) . "','" . $slot . "', 'службове', '80', '" . $disabled . "', '')";
         if ( $data[0]['id'] > 0 ) $q = "delete from booking where id='" . $data[0]['id'] . "'";
 
         $result = mysqli_query($conn, $q);
