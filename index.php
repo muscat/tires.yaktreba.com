@@ -311,7 +311,7 @@ var booking_handicap=" . $booking_handicap . ";
         // текущее состояние
         $tmp_date = new DateTime("00:00:00", new DateTimeZone('Europe/Kiev'));
         $weekday_today = $tmp_date->format('N');
-        $epoch_today = $tmp_date->format('U');
+        $epoch_today = $tmp_date->format('U'); // 00:00 текущего дня в виде epoch
 
         // $weekday_today=date('N'); // номер текущего дня недели (начало перебора), 1 for Monday through 7 for Sunday
         // $epoch_today=date('U', strtotime('00:00:00'));  // 00:00 текущей даты (в виде unix epoch), в качестве точки отсчета
@@ -341,13 +341,16 @@ var booking_handicap=" . $booking_handicap . ";
             if ($pre_day_of_week > $day_of_week) $nextweek = 1; // если было "переполнение" недели, то есть был переход "воскресение 7 -> понедельник 1" - ставим метку "след.неделя"
             $pre_day_of_week = $day_of_week;
 
-            if (($nextweek == 1) and $weekday_today < 4) $week_overflow = 1;                               // если был переход через воскресение и начало перебора меньше четверга - писать "на следующей неделе"
+            if (($nextweek == 1) and $weekday_today < 4) $week_overflow = 1;                      // если был переход через воскресение и начало перебора меньше четверга - писать "на следующей неделе"
             if (($nextweek == 1) and abs($weekday_today - $check_today) > 5) $week_overflow = 1;  // если был переход через воскресение и разница между началом и предполагаемым днем больше 5 дней - писать "на следующей неделе"
 
             // искать по in_array попадает ли на день праздник (список - из базы)
             if ( in_array( date('Y-m-d', $date), $holidays) ) { $count++; continue; }
 
-            // если текущий день цикла - будний день, выводим на экран
+            // если текущее время больше чем work_time_end (обычно вечером) - пропускать этот день 
+            if ( date('U') > ($epoch_today + $work_time_end) ) { $count++; continue; }
+
+            // если текущий день цикла - будний день, выводим его на экран
             if ($day_of_week <= $working_days_of_week) {
                 $days_shown++;
                 $timeslot = $work_time_start;

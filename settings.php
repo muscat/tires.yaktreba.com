@@ -43,7 +43,7 @@ if ($action == 'save') {
         $q=$q . ';';  }
         
         
-        echo $q . "<br>"; // DEBUG
+        // echo $q . "<br>"; // DEBUG
         $result = mysqli_query($conn, $q);
         if (!$result) {
             echo "error|error #210: " . mysqli_error($conn) . '|0000';
