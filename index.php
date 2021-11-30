@@ -347,8 +347,8 @@ var booking_handicap=" . $booking_handicap . ";
             // искать по in_array попадает ли на день праздник (список - из базы)
             if ( in_array( date('Y-m-d', $date), $holidays) ) { $count++; continue; }
 
-            // если текущее время больше чем work_time_end (обычно вечером) - пропускать этот день 
-            if ( date('U') > ($epoch_today + $work_time_end) ) { $count++; continue; }
+            // если текущее время больше чем work_time_end (т.е. нет возможных таймслотов для записи) - пропускать этот день 
+            if ( date('U') > ($epoch_today + $count * 86400 + $work_time_end - ($booking_handicap * $timeslotsize) ) ) { $count++; continue; }
 
             // если текущий день цикла - будний день, выводим его на экран
             if ($day_of_week <= $working_days_of_week) {

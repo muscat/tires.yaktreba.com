@@ -1,1 +1,3 @@
 SetEnvIfNoCase User-Agent "^Googlebot" search_bot
+
+Redirect /admin  /dashboard.php
